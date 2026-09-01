@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.env
+.env.local
+.env*.local
+.netlify
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# Large local-only asset folders (kept out of the repo; logo lives in public/brand/)
+/brand/
+/learning for highset vs lowset/
