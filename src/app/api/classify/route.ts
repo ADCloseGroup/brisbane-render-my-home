@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { classifyHouse } from '@/lib/classify';
 
 export const runtime = 'nodejs';
-export const maxDuration = 26;
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   let body: { imageBase64?: string; mimeType?: string };

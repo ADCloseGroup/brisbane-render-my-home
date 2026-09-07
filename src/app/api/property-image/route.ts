@@ -3,7 +3,7 @@ import { acquirePropertyImage } from '@/lib/propertyImage';
 import type { LatLng } from '@/lib/geo';
 
 export const runtime = 'nodejs';
-export const maxDuration = 26;
+export const maxDuration = 60;
 
 /**
  * GET /api/property-image?address=...&lat=...&lng=...

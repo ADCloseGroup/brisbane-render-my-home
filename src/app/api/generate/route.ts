@@ -3,7 +3,7 @@ import { renderHouse } from '@/lib/gemini';
 import type { GenerateRequest } from '@/lib/types';
 
 export const runtime = 'nodejs';
-export const maxDuration = 26;
+export const maxDuration = 60;
 
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 12;
@@ -18,7 +18,7 @@ function limited(ip: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-nf-client-connection-ip') || req.headers.get('x-forwarded-for') || 'anon';
+  const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || 'anon';
   if (limited(ip)) {
     return NextResponse.json({ error: 'Too many requests, slow down a moment.' }, { status: 429 });
   }

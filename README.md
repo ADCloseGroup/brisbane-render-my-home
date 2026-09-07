@@ -5,7 +5,7 @@ photo, sees their house photo-realistically **cement rendered** in seconds, trie
 Australia's most popular Dulux colours, gets an indicative price, and unlocks the
 full-resolution before/after by leaving their details.
 
-**Stack:** Next.js 14 (App Router) · TypeScript · Tailwind · Netlify · Supabase ·
+**Stack:** Next.js 14 (App Router) · TypeScript · Tailwind · Vercel · Supabase ·
 Gemini 2.5 Flash Image ("nano banana") render engine · Resend email · generic CRM webhook.
 
 > **It runs with no API keys.** Missing keys degrade gracefully (mock render returns the
@@ -38,7 +38,7 @@ Browser (Next.js client)
                                 └──► /api/estimate ──► pricing.ts (your methodology)
                                 └──► /api/lead      ──► Supabase + Resend + CRM webhook
 
-Netlify (hosting + serverless route handlers)   Supabase (Postgres + Storage + RLS)
+Vercel (hosting + route handlers as functions)  Supabase (Postgres + RLS)
 ```
 
 **Why these choices**
@@ -94,16 +94,24 @@ render-my-home/
 ## 8. Environment variables
 See [`.env.example`](.env.example) — every var documented inline.
 
-## 9. Deployment (Netlify)
-1. Push repo to GitHub; "Add new site → Import" in Netlify.
-2. Build command `npm run build`, publish `.next`; the `@netlify/plugin-nextjs` plugin is
-   declared in `netlify.toml`.
-3. Add all env vars under **Site settings → Environment variables** (server keys **without**
-   `NEXT_PUBLIC_`).
-4. Run `supabase/schema.sql` in the Supabase SQL editor; create a public Storage bucket
-   `renders` for before/after URLs (Beta).
-5. Restrict the Maps key by HTTP referrer to your domain; keep Street View/Gemini keys server-side.
-6. Deploy. Verify `/api/generate` returns `mocked:true` until `GEMINI_API_KEY` is set.
+## 9. Deployment (Vercel)
+1. Push the repo to GitHub; **Add New → Project** in Vercel and import it. Next.js is
+   detected, so the build command and output directory need no configuration.
+2. Add all env vars under **Project → Settings → Environment variables** (server keys
+   **without** `NEXT_PUBLIC_`).
+3. Run `supabase/schema.sql` in the Supabase SQL editor — optional; the app runs without a
+   database and only `leads` is written by the current code.
+4. Restrict the Maps key by HTTP referrer to your domain; keep Street View/Gemini keys server-side.
+5. Deploy. Verify `/api/generate` returns `mocked:true` until `GEMINI_API_KEY` is set.
+
+**Function duration.** `/api/generate`, `/api/classify` and `/api/property-image` declare
+`maxDuration = 60`. Renders measured at 15–40s, so the previous 26s — Netlify Pro's
+ceiling — failed the slow ones. 60s is the Vercel Hobby maximum; Pro allows more if
+renders ever grow past it.
+
+**Do not set `TURNSTILE_SECRET_KEY` yet.** No client code sends a Turnstile token, and
+`/api/lead` rejects a submission when a secret is configured but no token arrives — so
+setting it alone turns every lead into a 400. Wire the widget first.
 
 ## 10. Cost per visualisation (indicative, AUD)
 | Item | Cost |

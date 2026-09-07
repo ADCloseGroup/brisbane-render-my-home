@@ -123,7 +123,7 @@ async function pushToCRM(lead: Lead, beforeUrl?: string, afterUrl?: string) {
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-nf-client-connection-ip') || req.headers.get('x-forwarded-for') || 'anon';
+  const ip = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || 'anon';
   let payload: { lead: Lead; turnstileToken?: string; beforeUrl?: string; afterUrl?: string };
   try {
     payload = await req.json();
